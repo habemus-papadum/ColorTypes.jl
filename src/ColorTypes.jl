@@ -2,7 +2,17 @@ module ColorTypes
 
 using FixedPointNumbers
 import FixedPointNumbers: floattype
-using Base: @pure
+@static if VERSION >= v"1.8"
+    using Base: @assume_effects
+    macro pure_or_foldable(ex)
+        esc(:(@assume_effects :foldable $ex))
+    end
+else
+    using Base: @pure
+    macro pure_or_foldable(ex)
+        esc(:(@pure $ex))
+    end
+end
 
 const Fractional = Union{AbstractFloat, FixedPoint}
 
